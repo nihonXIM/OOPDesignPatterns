@@ -157,6 +157,269 @@ flowchart LR
 ## 7. Adapter and Facade Pattern
 ## 8. Template Method Pattern!
 ## 9. Iterator and Composite Pattern
+```java
+userIterator.hasNext();
+userIterator.next();
+```
+9-1. IteratorManualArrayAndList\
+9-2. IteratorArrayList\
+9-3. IteratorStack\
+9-4. IteratorEnumeration\
+9-5. IteratorStringCollection\
+9-6. IteratorCollection
+
+[Interface Iterator]は配列を探索するために必要な関数があります。\
+[Interface Menu]は配列を探索するIteratorを食事のメニューで実装したクラスを生成する関数があります。\
+[MenuItem]は名前、値段、メニューの説明などの変数があります。
+
+### 9-6. IteratorCollection
+```java
+public class Collections {
+	public static void main (String args[]) {		
+		Vector<String> v = new Vector<String>(Arrays.asList(args));
+		
+		System.out.println("Using enumeration with Vector");
+		Enumeration<String> enumeration = v.elements();
+		while (enumeration.hasMoreElements()) {
+			System.out.println(enumeration.nextElement());
+		}
+		
+		System.out.println("Using iterator with Vector");
+		Iterator<String> iterator = (Iterator<String>) v.iterator();
+		while (iterator.hasNext()) {
+			System.out.println(iterator.next());
+		}
+		
+		System.out.println("Using for/in with array of Strings");
+		for (String color : args) {
+			System.out.println(color);
+		}
+
+	}
+}
+
+```
+
+MenuはMenuItemがリストに入っています。\
+MenuItemは一つの食事のメニューを表しています。
+
+MenuならStackにArrayListのIteratorの機能を入れます。\
+
+
+
+### 9-3. IteratorStack
+```mermaid
+flowchart TD
+    style Iterator fill: #000, color: #fff, stroke: #fff
+    MenuComponent(MenuComponent)
+    Iterator(Iterator)
+    MenuItem
+    Menu
+    NullIterator
+    CompositeIterator
+
+    subgraph CompositeIterator
+        StackAny
+    end    
+    subgraph NullIterator
+        returnNull
+    end
+    subgraph Menu
+        ArrayListMenuComponent
+    end
+
+    Iterator -.-> CompositeIterator
+    Iterator -.-> NullIterator
+    MenuComponent -.-> Menu
+    MenuComponent -.-> MenuItem
+    MenuComponent --> ArrayListMenuComponent
+    
+
+
+```
+
+```java
+import com.jdpattern.composite.menuiterator.CompositeIterator;
+import com.jdpattern.composite.menuiterator.NullIterator;
+
+public abstract class MenuComponent {
+    public abstract Iterator createIterator();
+}
+
+public class MenuItem extends MenuComponent {
+    public Iterator createIterator() {
+        new NullIterator();
+    }
+}
+public class Menu extends MenuComponent {
+    ArrayList menuComponents = new ArrayList();
+    public Iterator createIterator() {
+        new CompositeIterator(menuComponents.iterator());
+    }
+}
+```
+
+```java
+public class CompositeIterator implements Iterator {
+    Stack stack = new Stack();
+
+    public CompositeIterator(Iterator iterator) {
+        stack.push(iterator); //menuComponent.iterator()
+    }
+
+    public Object next() {
+        if (hasNext()) {
+            Iterator iterator = (Iterator) stack.peek(); //allmenu menuComponent.iterator() -> pancake CompositeIterator
+            MenuComponent component = (MenuComponent) iterator.next(); //allmenu menuComponent.iterator() -> pancake CompositeIterator -> pancake menuComponent.iterator()
+            System.out.println(component.getName()); //
+            if (component instanceof Menu) {
+                stack.push(component.createIterator()); //CompositeIterator
+            }
+            return component;
+        } else {
+            return null;
+        }
+    }
+
+    public boolean hasNext() {
+        if (stack.empty()) {
+            return false;
+        } else {
+            System.out.println("1");
+            Iterator iterator = (Iterator) stack.peek(); //menuComponents.iterator() allmenu -> pancake CompositeIterator -> pancake menuComponent.iterator()
+            if (!iterator.hasNext()) { //메뉴가 없으면
+                stack.pop();
+                return hasNext();
+            } else {
+                return true;
+            }
+        }
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+}
+```
+## 10. State Pattern
+## 11. Proxy Pattern
+## 12. Compound Pattern
+## 13. Etc(MVC) Pattern
+
+## 14. Builder
+## 15. Prototype
+## 16. Bridge
+## 17. Flyweight
+## 18. Interpreter
+## 19. Chain of responsibility
+## 20. Mediator
+## 21. Memento
+## 22. Visitor
+## 1. Strategy Pattern
+#### Interfaceとabstract classの違い
+* 子クラスとして承継しなくては使用できない。
+* 一つしか承継できない。
+* Encapsulated　Behaviour
+
+```java
+Duck mallard = new Duck();//(X)
+Duck mallard = new MallardDuck();//(O)
+```
+#### abstract function
+・必ず子クラスとして承継して関数部分を実装して呼びます。
+
+```java
+abstract void display()//(X)
+{	
+}
+```
+
+#### interface function
+
+## 2. Observer Pattern
+
+## 3. Decorator Pattern
+
+## 4. Factory Pattern
+・左側の親オブジェクトタイプは親の関数を使う
+・左側の子オブジェクトタイプは子の関数を使う
+```java
+
+```
+・親オブジェクトにだけある関数によって呼ばれても、子オブジェクトタイプなら、子の関数が呼ばれます。
+　CaffeineBeverageWithHook
+
+
+#### Factory MethodとAbstrct Factoryの違い
+PizzaIngredientFactory =>　Abstract Factory
+createMethod() => Factory Method
+```java
+public abstract class PizzaStore {
+    //Factory Method
+    protected abstract Pizza createPizza(String item);
+    public Pizza orderPizza(String type) {
+        Pizza pizza = createPizza(type);
+        System.out.println("--- Making a " + pizza.getName() + " ---");
+        pizza.prepare();
+        pizza.bake();
+        return pizza;
+    }
+}
+//Abstract Factory
+/*
+ * PizzaIngredientFactory is implemented as an
+ * Abstract Factory because we need to create families
+ * of products(the ingredients)
+ * 
+ * */
+public interface PizzaIngredientFactory {
+    //Factory Method
+    public Dough createDough();
+    public Sauce createSauce();
+
+}
+public class NYPizzaIngredientFactory implements PizzaIngredientFactory {
+
+    public Dough createDough() {
+        return new ThinCrustDough();
+    }
+}
+```
+
+
+
+## 5. Singleton Pattern
+
+```java
+public class Singleton {
+	private static Singleton uniqueInstance;
+ 
+	// other useful instance variables here
+ 
+	private Singleton() {}
+ 
+	public static Singleton getInstance() {
+		if (uniqueInstance == null) {
+			uniqueInstance = new Singleton();
+		}
+		return uniqueInstance;
+	}
+ 
+	// other useful methods here
+}
+
+```
+
+## 6. Command Pattern
+```mermaid
+flowchart LR
+    OnCommand --> Command
+    OffCommand --> Command
+    
+```
+## 7. Adapter and Facade Pattern
+## 8. Template Method Pattern!
+## 9. Iterator and Composite Pattern
 [Interface Iterator]は配列を探索するために必要な関数があります。\
 [Interface Menu]は配列を探索するIteratorを食事のメニューで実装したクラスを生成する関数があります。\
 [MenuItem]は名前、値段、メニューの説明などの変数があります。
