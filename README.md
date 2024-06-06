@@ -13,6 +13,14 @@ Design Patternsは\
 API, SDK, Common Libraryやゲームなどの様々な種類のアプリで\
 欠かさず使用されています。
 
+こちらにはJAVAで説明します。
+
+![img.png](img.png)
+
+Java Design Patterns を参考にして\
+C++, Python, JavaScript, SwiftなどのOOP言語に応用できるように\
+説明していきたいと思います。
+
 1. Strategy Pattern
 2. Observer Pattern
 3. Decorator Pattern
