@@ -599,7 +599,6 @@ iterator2 = new NewIterator();\
 class NewIterator implements **Iterator**\
 Iterator<MenuComponent>で指定されても\
 Iteratorで実装されているNewIteratorなら、挿入できます。
-![img_2.png](img_2.png)
 
 
 ## 10. State Pattern
