@@ -1,5 +1,6 @@
 package com.jdpattern.Icomposite.menuiterator;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class MenuItem extends MenuComponent {
@@ -38,6 +39,11 @@ public class MenuItem extends MenuComponent {
 
 	public Iterator<MenuComponent> createIterator() {
 		return new NullIterator();
+	}
+
+	@Override
+	public ArrayList<MenuComponent> getAllChild() {
+		return null;
 	}
 
 	public void print() {

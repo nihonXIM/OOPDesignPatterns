@@ -26,6 +26,11 @@ public class Menu extends MenuComponent {
 		return menuComponents.get(i);
 	}
 
+	public ArrayList<MenuComponent> getAllChild() {
+		return menuComponents;
+	}
+
+
 	public String getName() {
 		return name;
 	}
@@ -39,6 +44,11 @@ public class Menu extends MenuComponent {
 		if (iterator == null) {
 			iterator = new CompositeIterator(menuComponents.iterator());
 		}
+
+//		Iterator<MenuComponent> iterator2 = null;
+//		iterator2 = new NewIterator();
+
+
 		return iterator;
 	}
 
@@ -51,6 +61,15 @@ public class Menu extends MenuComponent {
 		Iterator<MenuComponent> iterator = menuComponents.iterator();
 		while (iterator.hasNext()) {
 			MenuComponent menuComponent = iterator.next();
+			if(menuComponent instanceof Menu){
+				System.out.print("***Menu");
+//				menuComponent.print();
+
+			}else{
+				System.out.print("***MenuItem");
+//				menuComponent.print();
+
+			}
 			menuComponent.print();
 		}
 	}

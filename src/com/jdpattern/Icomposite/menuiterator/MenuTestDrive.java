@@ -1,5 +1,10 @@
 package com.jdpattern.Icomposite.menuiterator;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
 public class MenuTestDrive {
 	public static void main(String args[]) {
 
@@ -107,8 +112,8 @@ public class MenuTestDrive {
 
 		Waitress waitress = new Waitress(allMenus);
 
-//		waitress.printVegetarianMenu();
-		waitress.printMenu();
+		waitress.printVegetarianMenu();
+//		waitress.printMenu();
 
 	}
 }

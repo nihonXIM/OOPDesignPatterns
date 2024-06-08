@@ -28,7 +28,8 @@ public abstract class MenuComponent {
 	}
 	
 	public abstract Iterator createIterator();
- 
+	public abstract ArrayList<MenuComponent> getAllChild();
+
 	public void print() {
 		throw new UnsupportedOperationException();
 	}

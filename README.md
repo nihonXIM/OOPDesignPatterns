@@ -524,6 +524,12 @@ Stackを利用してTREEを探索します。\
 Menuは自分自身を配列として持っているので\
 Decorator Patternのように処理します。\
 print()関数の呼び出しはDecorator PatternのgetDescription(), getCost()のような関数の呼び出しです。
+
+Menuのprint()はnext()を呼び出します。
+MenuItemのprint()はnext()を呼び出す事はありません。
+同じ関数だけでの依存関係を成立させます。
+
+
 ```mermaid
 flowchart RL
     
@@ -563,7 +569,37 @@ flowchart RL
     MenuItem11 --- CafeMenu
 
 ```
+Stack
+```mermaid
+flowchart LR
 
+    subgraph Menu
+        ArrayList&ltMenuComponent&gt(ArrayList&ltMenuComponent&gt fa:fa-layer-group) 
+        Iterator&ltMenuComponent&gt
+    end
+
+
+subgraph CompositeIterator
+    Stack&ltIterator&ltMenuComponent&gt&gt
+end
+
+Menu --1 call--> createIterator&#40&#41
+Stack&ltIterator&ltMenuComponent&gt&gt(Stack&ltIterator&ltMenuComponent&gt&gt fa:fa-layer-group) --4 Stack.push--> ArrayList&ltMenuComponent&gt.iterator&#40&#41
+
+createIterator&#40&#41 --3 Create--> CompositeIterator
+
+ArrayList&ltMenuComponent&gt --2 param callByReference--> createIterator&#40&#41
+ArrayList&ltMenuComponent&gt --5 reference after call--> ArrayList&ltMenuComponent&gt.iterator&#40&#41
+Iterator&ltMenuComponent&gt --0 reference after call--> ArrayList&ltMenuComponent&gt
+
+```
+
+**Iterator**< MenuComponent > iterator2 = null;\
+iterator2 = new NewIterator();\
+class NewIterator implements **Iterator**\
+Iterator<MenuComponent>で指定されても\
+Iteratorで実装されているNewIteratorなら、挿入できます。
+![img_2.png](img_2.png)
 
 
 ## 10. State Pattern
