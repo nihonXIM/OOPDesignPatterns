@@ -523,7 +523,7 @@ Stackを利用してTREEを探索します。\
 
 Menuは自分自身を配列として持っているので\
 Decorator Patternのように処理します。\
-print()関数の呼び出しはDecorator PatternのgetDescription(), getCost()のような関数です。
+print()関数の呼び出しはDecorator PatternのgetDescription(), getCost()のような関数の呼び出しです。
 ```mermaid
 flowchart RL
     
