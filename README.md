@@ -6,12 +6,16 @@ Java, C#, C++, Swift, JavaScript, Python
 
 Procedure Languages\
 C, Python, Javascriptの一部で、\
-関数だけで作る事ができる言語の問題点を改善している概念となります。
+関数だけで作る事ができる言語とは異なる新しいObject-Class概念で設計する方法を提供しています。
+
+
+GIMP => C
+Embed, Kernel, System, Core => C
 
 言語の一般的な原理は似ているので色々な言語の一つを選択して応用できます。\
 Design Patternsは\
 API, SDK, Common Libraryやゲームなどの様々な種類のアプリで\
-欠かさず使用されています。
+活用できます。
 
 こちらにはJAVAで説明します。
 
@@ -21,19 +25,24 @@ Java Design Patterns を参考にして\
 C++, Python, JavaScript, SwiftなどのOOP言語に応用できるように\
 説明していきたいと思います。
 
-1. Strategy Pattern
-2. Observer Pattern
-3. Decorator Pattern
-4. Factory Pattern – Abstract Factory, Factory Method
-5. Singleton Pattern
-6. Command Pattern
-7. Adapter and Facade Pattern
-8. Template Method Pattern
-9. Iterator and Composite Pattern
-10. State Pattern
-11. Proxy Pattern
-12. Compound Pattern
-13. Etc(MVC) Pattern
+
+# INDEX
+![img3.png](img3.png)
+
+
+1. A Strategy Pattern
+2. B Observer Pattern
+3. C Decorator Pattern
+4. D Factory Pattern – Abstract Factory, Factory Method
+5. E Singleton Pattern
+6. F Command Pattern
+7. G Adapter and Facade Pattern
+8. H Template Method Pattern
+9. I Iterator and Composite Pattern
+10. J State Pattern
+11. K Proxy Pattern
+12. L Compound Pattern
+13. L MVC Pattern
 
 14. Builder
 15. Prototype
@@ -66,9 +75,15 @@ Duck mallard = new MallardDuck();//(O)
 ・必ず子クラスとして承継して関数部分を実装して呼びます。
 
 ```java
-abstract void display()//(X)
-{	
+abstract void display(){System.out.println("");}//abstract function 実装しない(X)
+
+
+interface Behaviour{
+    int variableInt = 0; //変換しない(X)
+    void display(){System.out.println("");}//interface class function 実装しない(X)
 }
+void display(){System.out.println("");}//(X)
+
 ```
 
 #### interface function
@@ -205,12 +220,23 @@ MenuItemは一つの食事のメニューを表しています。
 
 MenuならStackにArrayListのIteratorの機能を入れます。\
 
-
+<head>
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  rel="stylesheet"
+/>
+</head>
 
 ### 9-3. IteratorStack
+
 ```mermaid
+
 flowchart TD
+    
+    
     style Iterator fill: #000, color: #fff, stroke: #fff
+    style ArrayList fill: #000, color: #fff, stroke-width: 2px
+    style MenuComponent fill: #000, color: #fff, stroke: #999, stroke-width: 2px, stroke-dasharray: 10 10
     MenuComponent(MenuComponent)
     Iterator(Iterator)
     MenuItem
@@ -219,62 +245,188 @@ flowchart TD
     CompositeIterator
 
     subgraph CompositeIterator
-        StackAny
+        Stack(Stack fa:fa-layer-group)
     end    
     subgraph NullIterator
         returnNull
     end
     subgraph Menu
-        ArrayListMenuComponent
+        ArrayList(ArrayList fa:fa-layer-group)
     end
 
-    Iterator -.-> CompositeIterator
-    Iterator -.-> NullIterator
-    MenuComponent -.-> Menu
-    MenuComponent -.-> MenuItem
-    MenuComponent --> ArrayListMenuComponent
-    
-
+    Iterator -.- CompositeIterator
+    Iterator -.- NullIterator
+    MenuComponent -.- Menu
+    MenuComponent -.- MenuItem
+    MenuComponent --- ArrayList
 
 ```
-
+MenuComponent
 ```java
-import com.jdpattern.composite.menuiterator.CompositeIterator;
-import com.jdpattern.composite.menuiterator.NullIterator;
-
 public abstract class MenuComponent {
+
+    public void add(MenuComponent menuComponent) {
+        throw new UnsupportedOperationException();
+    }
+    public void remove(MenuComponent menuComponent) {
+        throw new UnsupportedOperationException();
+    }
+    public MenuComponent getChild(int i) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getName() {
+        throw new UnsupportedOperationException();
+    }
+    public String getDescription() {
+        throw new UnsupportedOperationException();
+    }
+    public double getPrice() {
+        throw new UnsupportedOperationException();
+    }
+    public boolean isVegetarian() {
+        throw new UnsupportedOperationException();
+    }
+
     public abstract Iterator createIterator();
+
+    public void print() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void printV(){
+        throw new UnsupportedOperationException();
+    }
+
+
 }
+```
+MenuItem
+```java
+
 
 public class MenuItem extends MenuComponent {
-    public Iterator createIterator() {
-        new NullIterator();
+
+    String name;
+    String description;
+    boolean vegetarian;
+    double price;
+
+    public MenuItem(String name,
+                    String description,
+                    boolean vegetarian,
+                    double price)
+    {
+        this.name = name;
+        this.description = description;
+        this.vegetarian = vegetarian;
+        this.price = price;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public boolean isVegetarian() {
+        return vegetarian;
+    }
+
+    public Iterator<MenuComponent> createIterator() {
+        return new NullIterator();
+    }
+
+    public void print() {
+        System.out.print("  " + getName());
+        if (isVegetarian()) {
+            System.out.print("(v)");
+        }
+        System.out.println(", " + getPrice());
+        System.out.println("     -- " + getDescription());
+    }
+
 }
+```
+Menu
+```java
+
+
 public class Menu extends MenuComponent {
-    ArrayList menuComponents = new ArrayList();
-    public Iterator createIterator() {
-        new CompositeIterator(menuComponents.iterator());
+    Iterator<MenuComponent> iterator = null;
+    ArrayList<MenuComponent> menuComponents = new ArrayList<MenuComponent>();
+    String name;
+    String description;
+
+    public Menu(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public void add(MenuComponent menuComponent) {
+        menuComponents.add(menuComponent);
+    }
+
+    public void remove(MenuComponent menuComponent) {
+        menuComponents.remove(menuComponent);
+    }
+
+    public MenuComponent getChild(int i) {
+        return menuComponents.get(i);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    public Iterator<MenuComponent> createIterator() {
+        if (iterator == null) {
+            iterator = new CompositeIterator(menuComponents.iterator());
+        }
+        return iterator;
+    }
+
+
+    public void print() {
+        System.out.print("\n" + getName());
+        System.out.println(", " + getDescription());
+        System.out.println("---------------------");
+
+        Iterator<MenuComponent> iterator = menuComponents.iterator();
+        //ArrayList Collectionで基本的に提供している[List iterator]
+        while (iterator.hasNext()) { //ArrayListのhasNext();
+            MenuComponent menuComponent = iterator.next();//ArrayListの次にあるオブジェクトを返える。
+            //黙示的に次第に移動する
+            menuComponent.print();
+        }
     }
 }
 ```
-
+CompositeIterator
 ```java
 public class CompositeIterator implements Iterator {
-    Stack stack = new Stack();
+    Stack<Iterator<MenuComponent>> stack = new Stack<Iterator<MenuComponent>>();
 
-    public CompositeIterator(Iterator iterator) {
-        stack.push(iterator); //menuComponent.iterator()
+    public CompositeIterator(Iterator<MenuComponent> iterator) {
+        stack.push(iterator);
     }
 
-    public Object next() {
+    public MenuComponent next() {
         if (hasNext()) {
-            Iterator iterator = (Iterator) stack.peek(); //allmenu menuComponent.iterator() -> pancake CompositeIterator
-            MenuComponent component = (MenuComponent) iterator.next(); //allmenu menuComponent.iterator() -> pancake CompositeIterator -> pancake menuComponent.iterator()
-            System.out.println(component.getName()); //
-            if (component instanceof Menu) {
-                stack.push(component.createIterator()); //CompositeIterator
-            }
+            Iterator<MenuComponent> iterator = stack.peek();
+            MenuComponent component = iterator.next();
+            stack.push(component.createIterator());
             return component;
         } else {
             return null;
@@ -285,9 +437,8 @@ public class CompositeIterator implements Iterator {
         if (stack.empty()) {
             return false;
         } else {
-            System.out.println("1");
-            Iterator iterator = (Iterator) stack.peek(); //menuComponents.iterator() allmenu -> pancake CompositeIterator -> pancake menuComponent.iterator()
-            if (!iterator.hasNext()) { //메뉴가 없으면
+            Iterator<MenuComponent> iterator = stack.peek();
+            if (!iterator.hasNext()) {
                 stack.pop();
                 return hasNext();
             } else {
@@ -295,13 +446,129 @@ public class CompositeIterator implements Iterator {
             }
         }
     }
+}
+```
+```java
+public class Waitress {
+    MenuComponent allMenus;
 
-    public void remove() {
-        throw new UnsupportedOperationException();
+    public Waitress(MenuComponent allMenus) {
+        this.allMenus = allMenus;
+    }
+
+    public void printMenu() {
+        allMenus.print();
+    }
+
+    public void printVegetarianMenu() {
+        Iterator<MenuComponent> iterator = allMenus.createIterator();
+
+        System.out.println("\nVEGETARIAN MENU\n----");
+        while (iterator.hasNext()) {
+            MenuComponent menuComponent = iterator.next();
+            try {
+                if (menuComponent.isVegetarian()) {
+                    menuComponent.print();
+                }
+            } catch (UnsupportedOperationException e) {}
+        }
     }
 }
 ```
+Drive
+```java
+public static void main(String args[]){
+    MenuComponent pancakeHouseMenu = new Menu("PANCAKE HOUSE MENU", "Breakfast");
+    MenuComponent dinerMenu = new Menu("DINER MENU", "Lunch");
+    MenuComponent cafeMenu = new Menu("CAFE MENU", "Dinner");
+    MenuComponent dessertMenu = new Menu("DESSERT MENU", "Dessert of course!");
+    
+    MenuComponent allMenus = new Menu("ALL MENUS", "All menus combined");
+		
+    allMenus.add(pancakeHouseMenu);
+    allMenus.add(dinerMenu);
+    allMenus.add(cafeMenu);
+    dinerMenu.add(dessertMenu);
+
+    pancakeHouseMenu.add(new MenuItem("K&B's Pancake Breakfast", "Pancakes with scrambled eggs, and toast", true, 2.99));
+    pancakeHouseMenu.add(new MenuItem("Regular Pancake Breakfast", "Pancakes with fried eggs, sausage", false, 2.99));
+    pancakeHouseMenu.add(new MenuItem("Blueberry Pancakes", "Pancakes made with fresh blueberries, and blueberry syrup", true, 3.49));
+    pancakeHouseMenu.add(new MenuItem("Waffles", "Waffles, with your choice of blueberries or strawberries", true, 3.59));
+
+    dinerMenu.add(new MenuItem("Vegetarian BLT", "(Fakin') Bacon with lettuce & tomato on whole wheat", true, 2.99));
+    dinerMenu.add(new MenuItem("BLT", "Bacon with lettuce & tomato on whole wheat", false, 2.99));
+    dinerMenu.add(new MenuItem("Soup of the day", "A bowl of the soup of the day, with a side of potato salad", false, 3.29));
+    dinerMenu.add(new MenuItem("Hotdog", "A hot dog, with saurkraut, relish, onions, topped with cheese", false, 3.05));
+    dinerMenu.add(new MenuItem("Steamed Veggies and Brown Rice", "A medly of steamed vegetables over brown rice", true, 3.99));
+    dinerMenu.add(new MenuItem("Pasta", "Spaghetti with Marinara Sauce, and a slice of sourdough bread", true, 3.89));
+
+    cafeMenu.add(new MenuItem("Veggie Burger and Air Fries", "Veggie burger on a whole wheat bun, lettuce, tomato, and fries", true, 3.99));
+    cafeMenu.add(new MenuItem("Soup of the day", "A cup of the soup of the day, with a side salad", false, 3.69));
+    cafeMenu.add(new MenuItem("Burrito", "A large burrito, with whole pinto beans, salsa, guacamole", true, 4.29));
+
+    dessertMenu.add(new MenuItem("Apple Pie", "Apple pie with a flakey crust, topped with vanilla icecream", true, 1.59));
+    dessertMenu.add(new MenuItem("Cheesecake", "Creamy New York cheesecake, with a chocolate graham crust", true, 1.99));
+    dessertMenu.add(new MenuItem("Sorbet", "A scoop of raspberry and a scoop of lime", true, 1.89));
+
+    Waitress waitress = new Waitress(allMenus);
+
+    waitress.printVegetarianMenu();
+    waitress.printMenu();
+}
+
+```
+
+Decorator PatternのようにArrayListを利用してTREEを探索します。\
+Stackを利用してTREEを探索します。\
+
+Menuは自分自身を配列として持っているので\
+Decorator Patternのように処理します。\
+print()関数の呼び出しはDecorator PatternのgetDescription(), getCost()のような関数です。
+```mermaid
+flowchart RL
+    
+    MenuComponent
+    Menu..
+    
+    subgraph Menu..
+        Menu. --> ArrayList
+    end
+
+
+    subgraph Diagram
+        Menu.. -.- MenuComponent
+        MenuItem -.- MenuComponent
+    end
+    
+    MenuItem --> ArrayList
+    
+
+
+    PancakeMenu ==1=== AllMenu
+    DinnerMenu ==5=== AllMenu
+    DessertMenu ==9=== DinnerMenu 
+    CafeMenu === AllMenu
+    AllMenu
+
+    MenuItem1 --2--- PancakeMenu
+    MenuItem2 --3--- PancakeMenu
+    MenuItem3 --4--- PancakeMenu
+    MenuItem4 --6--- DinnerMenu
+    MenuItem5 --7--- DinnerMenu
+    MenuItem6 --8--- DinnerMenu
+    MenuItem7 --10--- DessertMenu
+    MenuItem8 --11--- DessertMenu
+    MenuItem9 --12--- DessertMenu
+    MenuItem10 --- CafeMenu
+    MenuItem11 --- CafeMenu
+
+```
+
+
+
 ## 10. State Pattern
+```java
+```
 ## 11. Proxy Pattern
 ## 12. Compound Pattern
 ## 13. Etc(MVC) Pattern
